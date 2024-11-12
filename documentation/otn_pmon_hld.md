@@ -33,7 +33,217 @@ This document describes the high level design of PMON in SONiC
 
 <img src="../assets/flow_chart.png" alt="flow_chart" style="zoom: 90%;" />
 
-### 2.3 Component Description：
+### 2.3 Virtual Sonic-otn Device:
+Add virtual device to the sonic-platform. Code directory is under /platform/ot-vs/sonic-platform-modules-vs. One of the important files is ot_vschassis_metadata.json, which describes the components that make up the device, as follows:
+```json 
+{
+    "chassis": {
+        "name": "OLSV-CHASSIS",
+        "description": "KVM Virtual OLS",
+        "components": [],
+        "modules": [
+            {
+                "name": "SUPERVISOR0",
+                "description": "CONTROL-CARD",
+                "module-status": "Online",
+                "components": [
+                    {
+                        "name": "BOOT",
+                        "description": "Performs initialization of hardware components during booting"
+                    },
+                    {
+                        "name": "FPGA",
+                        "description": "Platform managment controller for on-board components"
+                    },
+                    {
+                        "name": "CPLD",
+                        "description": "Used for managing IO modules"
+                    },
+                    {
+                        "name": "ONIE",
+                        "description": "Open network install environment"
+                    }
+                ]
+            },
+            {
+                "name": "LINE-CARD0",
+                "description": "E110C CARD",
+                "module-status": "Online",
+                "components": [
+                    {
+                        "name": "AMPLIFIER-1-1-1",
+                        "description": "Optical amplifier (pre)"
+                    },
+                    {
+                        "name": "AMPLIFIER-1-1-2",
+                        "description": "Optical amplifier (boost)"
+                    },
+                    {
+                         "name": "OSC-1-1-1",
+                         "description": "Optical Supervisory Channel"
+                    },
+                    {
+                         "name": "APS-1-1-1",
+                         "description": "Optical automatic protection switch"
+                    },
+                    {
+                          "name": "ATTENUATOR-1-1-1",
+                         "description": "Optical attenuator"
+                    },
+                    {
+                         "name": "ATTENUATOR-1-1-2",
+                         "description": "Optical attenuator"
+                    },
+                    {
+                         "name": "ATTENUATOR-1-1-3",
+                         "description": "Optical attenuator"
+                    }
+                ]
+            },
+            {
+                "name": "LINE-CARD1",
+                "description": "E110C card",
+                "module-status": "Online",
+                "components": [
+                    {
+                        "name": "AMPLIFIER-1-2-1",
+                        "description": "Optical amplifier (pre)"
+                    },
+                    {
+                        "name": "AMPLIFIER-1-2-2",
+                        "description": "Optical amplifier (boost)"
+                    },
+                    {
+                         "name": "OSC-1-2-1",
+                         "description": "Optical Supervisory Channel"
+                    },
+                    {
+                         "name": "APS-1-2-1",
+                         "description": "Optical automatic protection switch"
+                    },
+                    {
+                          "name": "ATTENUATOR-1-2-1",
+                         "description": "Optical attenuator"
+                    },
+                    {
+                         "name": "ATTENUATOR-1-2-2",
+                         "description": "Optical attenuator"
+                    },
+                    {
+                         "name": "ATTENUATOR-1-2-3",
+                         "description": "Optical attenuator"
+                    }
+                ]
+            },
+            {
+                "name": "LINE-CARD2",
+                "description": "P230C card",
+                "module-status": "Online",
+                "components": [
+                    {
+                        "name": "TRANSCEIVER-1-3-C1",
+                        "description": "Client optical transceiver"
+                    },
+                    {
+                        "name": "TRANSCEIVER-1-3-C2",
+                        "description": "Client optical transceiver"
+                    },
+                    {
+                        "name": "TRANSCEIVER-1-3-C3",
+                        "description": "Client optical transceiver"
+                    },
+                    {
+                        "name": "TRANSCEIVER-1-3-C4",
+                        "description": "Client optical transceiver"
+                    },
+                    {
+                        "name": "TRANSCEIVER-1-3-L1",
+                        "description": "Line optical transceiver"
+                    }
+                ]
+            },
+            {
+                "name": "LINE-CARD3",
+                "description": "P230C card",
+                "module-status": "Online",
+                "components": [
+                    {
+                        "name": "TRANSCEIVER-1-4-C1",
+                        "description": "Client optical transceiver"
+                    },
+                    {
+                        "name": "TRANSCEIVER-1-4-C2",
+                        "description": "Client optical transceiver"
+                    },
+                    {
+                        "name": "TRANSCEIVER-1-4-C3",
+                        "description": "Client optical transceiver"
+                    },
+                    {
+                        "name": "TRANSCEIVER-1-4-C4",
+                        "description": "Client optical transceiver"
+                    },
+                    {
+                        "name": "TRANSCEIVER-1-4-L1",
+                        "description": "Line optical transceiver"
+                    }
+                ]
+            }
+        ],
+        "psus": [
+            {
+                "name": "PSU0",
+                "status_led": "green"
+            },
+            {
+                "name": "PSU1",
+                "status_led": "green"
+            }
+        ],
+        "fan_drawers": [
+          {
+            "name": "FanTray0",
+            "fans": [
+                {
+                    "name": "FanTray0-Fan0",
+                    "status_led": "green"
+                },
+                {
+                    "name": "FanTray0-Fan1",
+                    "status_led": "green"
+                },
+                {
+                    "name": "FanTray0-Fan2",
+                    "status_led": "green"
+                },
+                {
+                    "name": "FanTray0-Fan3",
+                    "status_led": "green"
+                }
+            ]
+          }
+        ],
+        "thermals": [
+            {
+                "name": "System Board",
+                "high-crit-threshold": 70,
+                "low-crit-threshold": 0,
+                "maximum-recorded": 60,
+                "minimum-recorded": 10
+            },
+            {
+                "name": "System Exhaust",
+                "high-crit-threshold": 70,
+                "low-crit-threshold": 0,
+                "maximum-recorded": 60,
+                "minimum-recorded": 10
+            }
+        ]
+    }
+}
+```
+
+### 2.4 Component Description：
 
 PM component：
 
@@ -45,7 +255,7 @@ ALARM component：
 
 \- an alarm will be cleared when a PSU's power is dropping across the warning-suppress threshold
 
-### 2.4 API Design：
+### 2.5 API Design：
 
 *   PM Instance creation API：
     
@@ -67,7 +277,7 @@ According to the value of the query state db, the maximum value, min
 
 Store counter or history database in PM data format.
 
-### 2.5 DB schema for PM：
+### 2.6 DB schema for PM：
 
 *   PM information is stored in counter table:
     
@@ -98,7 +308,7 @@ Store counter or history database in PM data format.
 
 <img src="../assets/pm_example.png" alt="pm_example" style="zoom: 100%;" />
 
-### 2.6 PM command:
+### 2.7 PM command:
 
 \[ccc\] show psu 1 pm 15 history 1
 
@@ -148,7 +358,7 @@ output\_voltage  2024-06-06 18:45:00  0.0 V      0.00 V  0.0 V 
 
 output\_power    2024-06-06 18:45:00  0.0 W      0.00 W  0.0 W    0.0 W    2024-06-06 18:45:04  2024-06-06 18:45:04  incomplete
 
-### 2.7 DB schema for ALARM：
+### 2.8 DB schema for ALARM：
 
 *   Alarm information is stored in counter table:
     
@@ -207,7 +417,7 @@ Validity       \= STRING
 
 14) "false"
 
-### 2.8 Alarm Command：
+### 2.9 Alarm Command：
 
 <img src="../assets/alarm_command.png" alt="alarm_command" style="zoom: 90%;" />
 
